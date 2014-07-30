@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var http = require('http');
-var https = require('https')
+var https = require('https');
 var yelp = require('yelp');
 var keys = require('../keys.js');
 
@@ -35,6 +35,17 @@ var apiUrls = {
 				paramObj.mode +
 				'&key=' +
 				keys.google;
+			return url;
+		},
+		places: function(paramObj) {
+			var url = 
+				'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=' +
+				paramObj.lat +
+				',' +
+				paramObj.lng +
+				'&radius=10&key=' +
+				keys.google;
+				console.log(url)
 			return url;
 		}
 	}
@@ -83,7 +94,7 @@ router.get('/', function(req, res) {
 	globalRes = res;
 
 	if(!req.query.lat || !req.query.lat || !req.query.address) {
-		res.json({error: 'Parameters not specificed'})
+		res.json({error: 'Parameters not specificed'});
 	} else {
 		//Get weather from latitude/longitude in request
 		httpGet(apiUrls.weather({
@@ -148,6 +159,31 @@ function removeYelpDuplicateJSON(error,data) {
 	getDistancesFromOrigin(filteredCateogryPOIs);
 }
 
+function getOpenPOIs(POIs) {
+	var total = 0;
+	var getDistancesFromOrigin;
+	var finalPOIs = [];
+
+	function getPlaces(POI) {
+		httpsGet(apiUrls.google.places({
+			lat: POI.location.coordinate.latitude,
+			lng: POI.location.coordinate.longitude
+		}), function(json) {
+			console.log(json.results[0])
+			if(json.results[0].opening_hours) {
+				finalPOIs.push(POI);
+			}
+			if(++total === POIs.length) {
+				getDistancesFromOrigin(finalPOIs);
+			}
+		});
+	}
+
+	for(var i = 0; i < POIs.length; ++i) {
+		getPlaces(POIs[i]);
+	}
+}
+
 function getDistancesFromOrigin(POIs) {
 	//Loop through all POI's
 	//Keep a total to know when requests are done as they're async.
@@ -176,7 +212,7 @@ function getDistancesFromOrigin(POIs) {
 		});
 	}
 
-	for(var i = 1; i < 6; ++i) {
+	for(var i = 1; i < POIs.length; ++i) {
 		getDistance(POIs[i]);
 	}
 }
