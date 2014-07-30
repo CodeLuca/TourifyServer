@@ -43,9 +43,8 @@ var apiUrls = {
 				paramObj.lat +
 				',' +
 				paramObj.lng +
-				'&radius=10&key=' +
+				'&radius=3000&open&keyword=tourist%20attraction&key=' +
 				keys.google;
-				console.log(url)
 			return url;
 		},
 		streetview: function(paramObj) {
@@ -118,19 +117,19 @@ function getWeather(weather) {
 	//These are the only weather codes which are 'good'
 	//(i.e. not rain)
 	var goodWeatherCodes = [113, 116, 119, 122, 143];
-	//All weather Yelp categories to search for
-	var yelpCategories = 'aquariums,galleries,museums,';
+	//All weather categories to search for
+	var placeCategories = 'amusement_park|aquarium|art_gallery|church|establishment|museum|place_of_worship';
 	//Weather code from location (`+` converts to number)
 	var weatherCode = +weather.data.current_condition[0].weatherCode;
 	if(typeof weatherCode === 'number')
-	//If `weatherCode` is not is in `goodWeatherCodes` then add outdoor Yelp categories
+	//If `weatherCode` is not is in `goodWeatherCodes` then add outdoor categories
 	if(goodWeatherCodes.indexOf(weatherCode) !== -1) {
-		yelpCategories += 'mini_golf,parks,skatingrinks,zoos';
+		placeCategories += '|park|zoo';
 	}
-	getYelp(yelpCategories);
+	getPlaces(placeCategories);
 }
 
-function getYelp(yelpCategories) {
+/*function getYelp(yelpCategories) {
 	var yelpClient = yelp.createClient(keys.yelp);
 	//Search yelp
 	yelpClient.search({
@@ -141,9 +140,18 @@ function getYelp(yelpCategories) {
 
 		category_filter: yelpCategories
 	}, removeYelpDuplicateJSON);	
+}*/
+
+function getPlaces() {
+	httpsGet(apiUrls.google.places({
+		lat: globalReq.query.lat,
+		lng: globalReq.query.lng
+	}), function(json) {
+		getDistancesFromOrigin(json.results);
+	});
 }
 
-function removeYelpDuplicateJSON(error,data) {
+/*function removeYelpDuplicateJSON(error,data) {
 	//Remove duplicate categories
 	//Does not remove categories where there are duplicates...
 	//...but with an additional different category
@@ -168,32 +176,7 @@ function removeYelpDuplicateJSON(error,data) {
 		}
 	});
 	getDistancesFromOrigin(filteredCateogryPOIs);
-}
-
-function getOpenPOIs(POIs) {
-	var total = 0;
-	var getDistancesFromOrigin;
-	var finalPOIs = [];
-
-	function getPlaces(POI) {
-		httpsGet(apiUrls.google.places({
-			lat: POI.location.coordinate.latitude,
-			lng: POI.location.coordinate.longitude
-		}), function(json) {
-			console.log(json.results[0])
-			if(json.results[0].opening_hours) {
-				finalPOIs.push(POI);
-			}
-			if(++total === POIs.length) {
-				getDistancesFromOrigin(finalPOIs);
-			}
-		});
-	}
-
-	for(var i = 0; i < POIs.length; ++i) {
-		getPlaces(POIs[i]);
-	}
-}
+}*/
 
 function getDistancesFromOrigin(POIs) {
 	//Loop through all POI's
@@ -201,8 +184,8 @@ function getDistancesFromOrigin(POIs) {
 	var total = 1;
 	POIs[0].distance = 0;
 	POIs[0].streetviewUrl = apiUrls.google.streetview({
-		lat: POIs[0].location.coordinate.latitude,
-		lng: POIs[0].location.coordinate.longitude
+		lat: POIs[0].geometry.location.lat,
+		lng: POIs[0].geometry.location.lng
 	});
 	var originPOI = POIs[0];
 	var finalPOIs = [originPOI];
@@ -210,19 +193,19 @@ function getDistancesFromOrigin(POIs) {
 	function getDistance(POI) {
 		httpsGet(apiUrls.google.distance({
 				origin: {
-					lat: originPOI.location.coordinate.latitude,
-					lng: originPOI.location.coordinate.longitude
+					lat: originPOI.geometry.location.lat,
+					lng: originPOI.geometry.location.lng
 				},
 				destination: {
-					lat: POI.location.coordinate.latitude,
-					lng: POI.location.coordinate.longitude
+					lat: POI.geometry.location.lat,
+					lng: POI.geometry.location.lng
 				},
 				mode: 'walking'
 		}), function(json) {
 			POI.distance = json.rows[0].elements[0].distance.value;
 			POI.streetviewUrl = apiUrls.google.streetview({
-				lat: POI.location.coordinate.latitude,
-				lng: POI.location.coordinate.longitude
+				lat: POI.geometry.location.lat,
+				lng: POI.geometry.location.lng
 			});
 			finalPOIs.push(POI);
 			if(++total === 5) {
