@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var http = require('http');
+var https = require('https')
 var yelp = require('yelp');
-var keys = require('../keys.js')
+var keys = require('../keys.js');
 
 var globalRes = '';
 var globalReq = '';
@@ -20,18 +21,18 @@ var apiUrls = {
 		return url;
 	},
 	google: {
-		distance: function(origin, destination, mode) {
+		distance: function(paramObj) {
 			var url = 
 				'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
-				origin.lat +
+				paramObj.origin.lat +
 				',' +
-				origin.lng +
+				paramObj.origin.lng +
 				'&destinations=' +
-				destination.lat +
+				paramObj.destination.lat +
 				',' +
-				destination.lng +
+				paramObj.destination.lng +
 				'&mode=' +
-				mode +
+				paramObj.mode +
 				'&key=' +
 				keys.google;
 			return url;
@@ -57,6 +58,24 @@ function httpGet(url, callback) {
 		});
   });
 }
+//Boilerplate code for getting JSON response
+function httpsGet(url, callback) {
+	https.get(url, function(res) {
+		var chunks = [];
+		res.on('data', function(chunk) {
+			chunks.push(chunk);
+		});
+		res.on('end', function() {
+			var body = chunks.join('');
+			//If it is a string, parse to JSON
+			if(typeof body === 'string') {
+				body = JSON.parse(body);
+			}
+			//Pass JSON response to callback
+			callback(body);
+		});
+  });
+}
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -67,7 +86,7 @@ router.get('/', function(req, res) {
 	httpGet(apiUrls.weather({
 		lat: globalReq.query.lat,
 		lng: globalReq.query.lng
-	}), getWeather());
+	}), getWeather);
 });
 
 function getWeather(weather) {
@@ -89,7 +108,8 @@ function getYelp(yelpCategories) {
 	var yelpClient = yelp.createClient(keys.yelp);
 	//Search yelp
 	yelpClient.search({
-		location: 'London',
+		location: globalReq.query.address,
+		cll: globalReq.query.lat + ',' + globalReq.query.lng
 		category_filter: yelpCategories
 	}, removeYelpDuplicateJSON);	
 }
@@ -113,7 +133,7 @@ function removeYelpDuplicateJSON(error,data) {
 		//If category does not exist already, and has coordidante field...
 		//...add to non-duplicate POI array
 
-		if(!alreadyExists && POI.location.coordidnate) {
+		if(!alreadyExists && POI.location.coordinate) {
 			categoryArray.push(POI.categories);
 			filteredCateogryPOIs.push(POI);
 		}
@@ -124,13 +144,13 @@ function removeYelpDuplicateJSON(error,data) {
 function getDistancesFromOrigin(POIs) {
 	//Loop through all POI's
 	//Keep a total to know when requests are done as they're async.
-	var total = 0;
+	var total = 1;
 	POIs[0].distance = 0;
 	var originPOI = POIs[0];
 	var finalPOIs = [originPOI];
 
 	function getDistance(POI) {
-		httpGet(apiUrls.google.distance({
+		httpsGet(apiUrls.google.distance({
 				origin: {
 					lat: originPOI.location.coordinate.latitude,
 					lng: originPOI.location.coordinate.longitude
@@ -141,15 +161,15 @@ function getDistancesFromOrigin(POIs) {
 				},
 				mode: 'walking'
 		}), function(json) {
-			var POIDistanceIncluded = POI.distance = json.rows[0].elements[0].distance.value;
-			finalPOIs.push(POIDistanceIncluded);
+			POI.distance = json.rows[0].elements[0].distance.value;
+			finalPOIs.push(POI);
 			if(++total === 5) {
 				makeLoop(finalPOIs);
 			}
 		});
 	}
 
-	for(var i = 1; i < 5; ++i) {
+	for(var i = 1; i < 6; ++i) {
 		getDistance(POIs[i]);
 	}
 }
