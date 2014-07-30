@@ -82,15 +82,15 @@ router.get('/', function(req, res) {
 	globalReq = req;
 	globalRes = res;
 
-	if(!req.query.lat && !req.query.lat && !req.query.address) {
+	if(!req.query.lat || !req.query.lat || !req.query.address) {
 		res.json({error: 'Parameters not specificed'})
+	} else {
+		//Get weather from latitude/longitude in request
+		httpGet(apiUrls.weather({
+			lat: globalReq.query.lat,
+			lng: globalReq.query.lng
+		}), getWeather);
 	}
-
-	//Get weather from latitude/longitude in request
-	httpGet(apiUrls.weather({
-		lat: globalReq.query.lat,
-		lng: globalReq.query.lng
-	}), getWeather);
 });
 
 function getWeather(weather) {
@@ -113,7 +113,7 @@ function getYelp(yelpCategories) {
 	//Search yelp
 	yelpClient.search({
 		location: globalReq.query.address,
-		cll: globalReq.query.lat + ',' + globalReq.query.lng
+		cll: globalReq.query.lat + ',' + globalReq.query.lng,
 		category_filter: yelpCategories
 	}, removeYelpDuplicateJSON);	
 }
