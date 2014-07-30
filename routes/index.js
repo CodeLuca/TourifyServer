@@ -201,7 +201,7 @@ function getDistancesFromOrigin(POIs) {
 	var total = 1;
 	POIs[0].distance = 0;
 
-	POIs[0].streetviewUrl = apiUrls.google.places({
+	POIs[0].streetviewUrl = apiUrls.google.streetviewUrl({
 		lat: POIs[0].location.coordinate.latitude,
 		lng: POIs[0].location.coordinate.longitude
 	});
