@@ -200,8 +200,7 @@ function getDistancesFromOrigin(POIs) {
 	//Keep a total to know when requests are done as they're async.
 	var total = 1;
 	POIs[0].distance = 0;
-
-	POIs[0].streetviewUrl = apiUrls.google.streetviewUrl({
+	POIs[0].streetviewUrl = apiUrls.google.streetview({
 		lat: POIs[0].location.coordinate.latitude,
 		lng: POIs[0].location.coordinate.longitude
 	});
