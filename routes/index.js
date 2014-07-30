@@ -82,6 +82,10 @@ router.get('/', function(req, res) {
 	globalReq = req;
 	globalRes = res;
 
+	if(!req.query.lat && !req.query.lat && !req.query.address) {
+		res.json({error: 'Parameters not specificed'})
+	}
+
 	//Get weather from latitude/longitude in request
 	httpGet(apiUrls.weather({
 		lat: globalReq.query.lat,
