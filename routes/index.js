@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var http = require('http');
 var https = require('https');
-var yelp = require('yelp');
 var keys = require('../keys.js');
 
 var globalRes = '';
@@ -129,54 +128,52 @@ function getWeather(weather) {
 	getPlaces(placeCategories);
 }
 
-/*function getYelp(yelpCategories) {
-	var yelpClient = yelp.createClient(keys.yelp);
-	//Search yelp
-	yelpClient.search({
-		location: globalReq.query.address,
-		cll: globalReq.query.lat + ',' + globalReq.query.lng,
-		radius_filter: 4000 || globalReq.query.radius,
-		sort: 2,
-
-		category_filter: yelpCategories
-	}, removeYelpDuplicateJSON);	
-}*/
-
 function getPlaces() {
 	httpsGet(apiUrls.google.places({
 		lat: globalReq.query.lat,
 		lng: globalReq.query.lng
 	}), function(json) {
-		getDistancesFromOrigin(json.results);
+		removeYeDuplicateTypes(json.results);
 	});
 }
 
-/*function removeYelpDuplicateJSON(error,data) {
-	//Remove duplicate categories
-	//Does not remove categories where there are duplicates...
-	//...but with an additional different category
-	var duplicateCateogryPOIs = data.businesses;
-	var categoryArray = [];
-	var filteredCateogryPOIs = [];
-	duplicateCateogryPOIs.forEach(function(POI) {
-		var alreadyExists = false;
-		categoryArray.forEach(function(category) {
-			//Compare nested arrays by converting to strings
-			if(JSON.stringify(POI.categories) === JSON.stringify(category)) {
-				//If category already exists set to `true`
-				alreadyExists = true;
+function removeYeDuplicateTypes(POIs) {
+	var types = {};
+	var filteredPOIs = [];
+
+	//Go through each of the POIs
+	POIs.forEach(function(item) {
+		var totalOfTypes = [];
+		var addType = true;
+		//Then go through each of the 'types' the POI has
+		item.types.forEach(function(type) {
+			//If it's an 'establishment' don't count to total
+			if(type === 'establishment') {
+				totalOfTypes.push(0);
+			//Otherwise either increase the count or set it to 1
+			} else {
+				if(types[type]) {
+					types[type]++;
+				} else {
+					types[type] = 1;
+				}
+				totalOfTypes.push(types[type]);
 			}
 		});
-		//If category does not exist already, and has coordidante field...
-		//...add to non-duplicate POI array
-
-		if(!alreadyExists && POI.location.coordinate) {
-			categoryArray.push(POI.categories);
-			filteredCateogryPOIs.push(POI);
+		//Now go through all of the totals
+		//If any are greater than 2 than reject it
+		//(i.e. there are already 2 POIs with the same types)
+		totalOfTypes.forEach(function(total) {
+			if(total > 2) {
+				addType = false;
+				}
+		});
+		if(addType) {
+			filteredPOIs.push(item);
 		}
 	});
-	getDistancesFromOrigin(filteredCateogryPOIs);
-}*/
+	getDistancesFromOrigin(filteredPOIs);
+}
 
 function getDistancesFromOrigin(POIs) {
 	//Loop through all POI's
@@ -202,6 +199,7 @@ function getDistancesFromOrigin(POIs) {
 				},
 				mode: 'walking'
 		}), function(json) {
+			console.log(json)
 			POI.distance = json.rows[0].elements[0].distance.value;
 			POI.streetviewUrl = apiUrls.google.streetview({
 				lat: POI.geometry.location.lat,
