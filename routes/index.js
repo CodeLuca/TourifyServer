@@ -77,12 +77,8 @@ function httpsGet(url, callback) {
   });
 }
 
-router.get('/', function(req, res) {
-	res.send('yay')
-})
-
 /* GET home page. */
-router.post('/', function(req, res) {
+router.get('/', function(req, res) {
 	globalReq = req;
 	globalRes = res;
 
