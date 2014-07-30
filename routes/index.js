@@ -47,6 +47,16 @@ var apiUrls = {
 				keys.google;
 				console.log(url)
 			return url;
+		},
+		streetview: function(paramObj) {
+			var url = 
+				'http://maps.googleapis.com/maps/api/streetview?size=400x400&location=' +
+				paramObj.lat + 
+				',' +
+				paramObj.lng +
+				'&key=' +
+				keys.google;
+			return url;
 		}
 	}
 };
@@ -109,9 +119,10 @@ function getWeather(weather) {
 	//(i.e. not rain)
 	var goodWeatherCodes = [113, 116, 119, 122, 143];
 	//All weather Yelp categories to search for
-	var yelpCategories = 'aquariums,leisure_centers,galleries,museums,';
+	var yelpCategories = 'aquariums,galleries,museums,';
 	//Weather code from location (`+` converts to number)
 	var weatherCode = +weather.data.current_condition[0].weatherCode;
+	if(typeof weatherCode === 'number')
 	//If `weatherCode` is not is in `goodWeatherCodes` then add outdoor Yelp categories
 	if(goodWeatherCodes.indexOf(weatherCode) !== -1) {
 		yelpCategories += 'mini_golf,parks,skatingrinks,zoos';
@@ -189,6 +200,11 @@ function getDistancesFromOrigin(POIs) {
 	//Keep a total to know when requests are done as they're async.
 	var total = 1;
 	POIs[0].distance = 0;
+
+	POIs[0].streetviewUrl = apiUrls.google.places({
+		lat: POIs[0].location.coordinate.latitude,
+		lng: POIs[0].location.coordinate.longitude
+	});
 	var originPOI = POIs[0];
 	var finalPOIs = [originPOI];
 
@@ -205,6 +221,10 @@ function getDistancesFromOrigin(POIs) {
 				mode: 'walking'
 		}), function(json) {
 			POI.distance = json.rows[0].elements[0].distance.value;
+			POI.streetviewUrl = apiUrls.google.streetview({
+				lat: POI.location.coordinate.latitude,
+				lng: POI.location.coordinate.longitude
+			});
 			finalPOIs.push(POI);
 			if(++total === 5) {
 				makeLoop(finalPOIs);
