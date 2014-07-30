@@ -114,6 +114,9 @@ function getYelp(yelpCategories) {
 	yelpClient.search({
 		location: globalReq.query.address,
 		cll: globalReq.query.lat + ',' + globalReq.query.lng,
+		radius_filter: 4000 || globalReq.query.radius,
+		sort: 2,
+
 		category_filter: yelpCategories
 	}, removeYelpDuplicateJSON);	
 }
@@ -209,7 +212,9 @@ function makeLoop(POIs) {
 
 	var sortedPOIs = POIs.sort(sortByDistance);
 	var loopedPOIs = formLoop(sortedPOIs);
-	globalRes.json(loopedPOIs);
+	globalRes.json({
+		results: loopedPOIs
+	});
 }
 
 module.exports = router;
