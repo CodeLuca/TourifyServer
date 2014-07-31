@@ -9,7 +9,8 @@ var keys = {
 		token_secret: "c50CcTyg26vZTfG-G2LfCNjJ_pw"
 	},
 	google: 'AIzaSyBUzkW2Z2hPkHBjtXJKu4SIuvHUHYNmgc4',
-	original: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4'
+	original: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4',
+	bing: 'gf0pHDu/95LreYUKYPVUjMACyUxGhnj41he+pcEGrCI'
 };
 
 module.exports = keys;

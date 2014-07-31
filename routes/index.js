@@ -46,16 +46,19 @@ var apiUrls = {
 				keys.google;
 			return url;
 		},
-		streetview: function(paramObj) {
+	},
+	bingImages: function(paramObj) {
 			var url = 
-				'http://maps.googleapis.com/maps/api/streetview?size=400x400&location=' +
-				paramObj.lat + 
-				',' +
+				'/Bing/Search/v1/Image?Query=%27' +
+				encodeURIComponent(paramObj.placeName) +
+				'%20' +
+				encodeURIComponent(paramObj.location) +
+				'%27&Latitude=' +
+				paramObj.lat +
+				'&Longitude=' +
 				paramObj.lng +
-				'&key=' +
-				keys.google;
+				'&$top=1&$format=JSON';
 			return url;
-		}
 	}
 };
 
@@ -138,9 +141,6 @@ function getPlaces() {
 }
 
 function removeYeDuplicateTypes(POIs) {
-	if(!POIs.results) {
-		console.log(POIs);
-	}
 	var types = {};
 	var filteredPOIs = [];
 
@@ -175,7 +175,42 @@ function removeYeDuplicateTypes(POIs) {
 			filteredPOIs.push(item);
 		}
 	});
-	getDistancesFromOrigin(filteredPOIs);
+	getBingImages(filteredPOIs);
+}
+
+function getBingImages(POIs) {
+	var filteredPOIs = [];
+	var total = 0;
+	function getImage(POI) {
+		var options = {
+			hostname: 'api.datamarket.azure.com',
+			path: apiUrls.bingImages({
+				placeName: POI.name,
+				location: POI.vicinity.substring(POI.vicinity.lastIndexOf(',')+2),
+				lat: POI.geometry.location.lat,
+				lng: POI.geometry.location.lat
+			}),
+			auth: 'username:' + keys.bing
+		};
+
+		https.get(options, function(res) {
+			var chunks = [];
+			res.on('data', function(chunk) {
+				chunks.push(chunk);
+			}).on('end', function() {
+				var searchResults = JSON.parse(chunks.join(''));
+				var url = searchResults.d.results[0].MediaUrl;
+				POI.image = url;
+				filteredPOIs.push(POI);
+				if(++total === POIs.length-1) {
+					getDistancesFromOrigin(filteredPOIs);
+				}
+			});
+		});
+	}
+	for(var i = 0; i < POIs.length; ++i) {
+		getImage(POIs[i]);
+	}
 }
 
 function getDistancesFromOrigin(POIs) {
@@ -183,10 +218,6 @@ function getDistancesFromOrigin(POIs) {
 	//Keep a total to know when requests are done as they're async.
 	var total = 1;
 	POIs[0].distance = 0;
-	POIs[0].streetviewUrl = apiUrls.google.streetview({
-		lat: POIs[0].geometry.location.lat,
-		lng: POIs[0].geometry.location.lng
-	});
 	var originPOI = POIs[0];
 	var finalPOIs = [originPOI];
 
@@ -203,10 +234,6 @@ function getDistancesFromOrigin(POIs) {
 				mode: 'walking'
 		}), function(json) {
 			POI.distance = json.rows[0].elements[0].distance.value;
-			POI.streetviewUrl = apiUrls.google.streetview({
-				lat: POI.geometry.location.lat,
-				lng: POI.geometry.location.lng
-			});
 			finalPOIs.push(POI);
 			if(++total === 5) {
 				makeLoop(finalPOIs);
