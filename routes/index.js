@@ -57,7 +57,7 @@ var apiUrls = {
 				paramObj.lat +
 				'&Longitude=' +
 				paramObj.lng +
-				'&$top=1&$format=JSON';
+				'&$top=1&$format=JSON&ImageFilters=%27Aspect%3ATall%27';
 			return url;
 	}
 };
