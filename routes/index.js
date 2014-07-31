@@ -315,7 +315,9 @@ function makeLoop(POIs) {
 				b.push(arr[i]);
 			}
 		}
-		b.push(arr[0]);
+		//For now comment out because it makes it look like a duplicate result error
+		//(It's not really, it's to meet the end of the loop, but who gives a toss - amirite?)
+		//b.push(arr[0]);
 		return b;
 	}
 
