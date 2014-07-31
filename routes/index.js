@@ -138,6 +138,9 @@ function getPlaces() {
 }
 
 function removeYeDuplicateTypes(POIs) {
+	if(!POIs.results) {
+		console.log(POIs);
+	}
 	var types = {};
 	var filteredPOIs = [];
 
