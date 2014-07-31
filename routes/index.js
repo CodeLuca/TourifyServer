@@ -7,6 +7,7 @@ var path = require('path');
 
 var globalRes = '';
 var globalReq = '';
+var globalNumReturnItems = 0;
 
 process.on("uncaughtException", function(error) {
 	console.log('ERROR!:\n')
@@ -254,6 +255,8 @@ function getBingImages(POIs) {
 }
 
 function getDistancesFromOrigin(POIs) {
+	//Get total number of items to return
+	globalNumReturnItems = POIs.length;
 	//Loop through all POI's
 	//Keep a total to know when requests are done as they're async.
 	var total = 1;
@@ -319,6 +322,7 @@ function makeLoop(POIs) {
 	var sortedPOIs = POIs.sort(sortByDistance);
 	var loopedPOIs = formLoop(sortedPOIs);
 	globalRes.json({
+		numberOfResults: globalNumReturnItems,
 		results: loopedPOIs
 	});
 }
