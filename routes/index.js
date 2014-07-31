@@ -7,6 +7,10 @@ var keys = require('../keys.js');
 var globalRes = '';
 var globalReq = '';
 
+process.on("uncaughtException", function(error) {
+	console.log(error.stack);
+});
+
 //The url's (incl. parameters) for the api's
 var apiUrls = {
 	weather: function(latLng) {
@@ -105,6 +109,7 @@ router.get('/', function(req, res) {
 	globalRes = res;
 
 	if(!req.query.lat || !req.query.lat || !req.query.address) {
+		console.log('\tWrong parameters')
 		res.json({error: 'Parameters not specificed'});
 	} else {
 		//Get weather from latitude/longitude in request
@@ -113,11 +118,13 @@ router.get('/', function(req, res) {
 			lng: globalReq.query.lng
 		}), function(weather) {
 			if(weather.data.current_condition) {
+				console.log('\tGot weather OK')
 				getWeather(weather);
 			} else {
+				console.log('\tCouldnt get weather')
 				globalRes.json(weather);
 			}
-    });
+    	});
 	}
 });
 
