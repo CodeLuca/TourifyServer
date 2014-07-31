@@ -107,6 +107,9 @@ function httpsGet(url, callback) {
 router.get('/', function(req, res) {
 	res.sendfile('index.html')
 });
+router.get('/index.html', function(req, res) {
+	res.sendfile('index.html')
+});
 router.get('/contactus.html', function(req, res) {
 	res.sendfile('contactus.html')
 });
