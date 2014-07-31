@@ -199,7 +199,6 @@ function getDistancesFromOrigin(POIs) {
 				},
 				mode: 'walking'
 		}), function(json) {
-			console.log(json)
 			POI.distance = json.rows[0].elements[0].distance.value;
 			POI.streetviewUrl = apiUrls.google.streetview({
 				lat: POI.geometry.location.lat,
