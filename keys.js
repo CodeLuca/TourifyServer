@@ -8,7 +8,8 @@ var keys = {
 		token: "aZ-3mK_l1WiaHzZIb9GBsPd0wR0qnO9P",
 		token_secret: "c50CcTyg26vZTfG-G2LfCNjJ_pw"
 	},
-	google: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4'
+	google: 'AIzaSyBUzkW2Z2hPkHBjtXJKu4SIuvHUHYNmgc4',
+	original: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4'
 };
 
 module.exports = keys;
