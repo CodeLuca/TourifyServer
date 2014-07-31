@@ -160,26 +160,30 @@ function getPlaces() {
 function removeYeDuplicateTypes(POIs) {
 	var types = {};
 	var filteredPOIs = [];
-
 	//Go through each of the POIs
 	POIs.forEach(function(item) {
 		var totalOfTypes = [];
 		var addType = true;
-		//Then go through each of the 'types' the POI has
-		item.types.forEach(function(type) {
-			//If it's an 'establishment' don't count to total
-			if(type === 'establishment') {
-				totalOfTypes.push(0);
-			//Otherwise either increase the count or set it to 1
-			} else {
-				if(types[type]) {
-					types[type]++;
+
+		if(item.types) {
+			//Then go through each of the 'types' the POI has
+			item.types.forEach(function(type) {
+				//If it's an 'establishment' don't count to total
+				if(type === 'establishment') {
+					totalOfTypes.push(0);
+				//Otherwise either increase the count or set it to 1
 				} else {
-					types[type] = 1;
+					if(types[type]) {
+						types[type]++;
+					} else {
+						types[type] = 1;
+					}
+					totalOfTypes.push(types[type]);
 				}
-				totalOfTypes.push(types[type]);
-			}
-		});
+			});
+		} else {
+			filteredPOIs.push(item)
+		}
 		//Now go through all of the totals
 		//If any are greater than 2 than reject it
 		//(i.e. there are already 2 POIs with the same types)
