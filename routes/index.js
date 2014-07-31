@@ -111,7 +111,13 @@ router.get('/', function(req, res) {
 		httpGet(apiUrls.weather({
 			lat: globalReq.query.lat,
 			lng: globalReq.query.lng
-		}), getWeather);
+		}), function(weather) {
+			if(weather.data.current_condition) {
+				getWeather(weather);
+			} else {
+				globalRes.json(weather);
+			}
+    });
 	}
 });
 
@@ -136,7 +142,11 @@ function getPlaces() {
 		lat: globalReq.query.lat,
 		lng: globalReq.query.lng
 	}), function(json) {
-		removeYeDuplicateTypes(json.results);
+		if(json.results.length) {
+			removeYeDuplicateTypes(json.results);
+		} else {
+			globalRes.json(json);
+		}
 	});
 }
 
