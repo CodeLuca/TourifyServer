@@ -9,6 +9,7 @@ var globalRes = '';
 var globalReq = '';
 
 process.on("uncaughtException", function(error) {
+	console.log('ERROR!:\n')
 	console.log(error.stack);
 });
 
@@ -164,8 +165,10 @@ function getPlaces() {
 		lng: globalReq.query.lng
 	}), function(json) {
 		if(json.results.length) {
+			console.log('Got places')
 			removeYeDuplicateTypes(json.results);
 		} else {
+			console.log('Couldnt get places')
 			globalRes.json(json);
 		}
 	});
@@ -210,6 +213,7 @@ function removeYeDuplicateTypes(POIs) {
 			filteredPOIs.push(item);
 		}
 	});
+	console.log('Removed duplicated OK')
 	getBingImages(filteredPOIs);
 }
 
@@ -238,6 +242,7 @@ function getBingImages(POIs) {
 				POI.image = url;
 				filteredPOIs.push(POI);
 				if(++total === POIs.length-1) {
+					console.log('Got bing images OK')
 					getDistancesFromOrigin(filteredPOIs);
 				}
 			});
@@ -270,7 +275,8 @@ function getDistancesFromOrigin(POIs) {
 		}), function(json) {
 			POI.distance = json.rows[0].elements[0].distance.value;
 			finalPOIs.push(POI);
-			if(++total === 5) {
+			if(++total === POIs.length-1) {
+				console.log('Got distances OK')
 				makeLoop(finalPOIs);
 			}
 		});
