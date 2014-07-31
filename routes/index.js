@@ -3,6 +3,7 @@ var router = express.Router();
 var http = require('http');
 var https = require('https');
 var keys = require('../keys.js');
+var path = require('path');
 
 var globalRes = '';
 var globalReq = '';
@@ -103,8 +104,18 @@ function httpsGet(url, callback) {
   });
 }
 
-/* GET home page. */
 router.get('/', function(req, res) {
+	res.sendfile('index.html')
+});
+router.get('/contactus.html', function(req, res) {
+	res.sendfile('contactus.html')
+});
+router.get('/theapp.html', function(req, res) {
+	res.sendfile('theapp.html')
+});
+
+/* GET home page. */
+router.get('/json', function(req, res) {
 	globalReq = req;
 	globalRes = res;
 
