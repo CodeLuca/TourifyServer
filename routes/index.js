@@ -4,6 +4,7 @@ var http = require('http');
 var https = require('https');
 var keys = require('../keys.js');
 var path = require('path');
+var yelp = require('yelp')
 var salesman = require('../salesman.js');
 
 var globalRes = '';
@@ -111,7 +112,7 @@ router.get('/', function(req, res) {
 	res.sendfile('index.html')
 });
 router.get('/webapp', function(req,res) {
-	res.sendfile('web	app.html')
+	res.sendfile('webapp.html')
 })
 router.get('/index.html', function(req, res) {
 	res.sendfile('index.html')
@@ -264,10 +265,10 @@ function getDistancesFromOrigin(POIs) {
 	for(var i = 0; i < 5; ++i) {
 		finalPOIs.push(POIs[i]);
 	}
-	var order = salesamn(finalPOIs);
+	var order = salesman(finalPOIs);
 	var newArr = new Array(order.length);
 	order.forEach(function(num) {
-		newArr[num] = finakPOIs[num]
+		newArr[num] = finalPOIs[num]
 	})
 
 	globalRes.json({

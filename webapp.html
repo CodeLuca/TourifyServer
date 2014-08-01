@@ -2,15 +2,18 @@
 <html>
 <head>
 	<link rel="stylesheet" href="css/app.css" type="text/css" />
-	<script type="text/template">
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4"></script>
+	<script type="text/javascript" src="js/data.js"></script>
+	<script id='locations' type="text/x-handlebars-template">
+		<div id='logo'/></div>
 		{{#each POIs}}
 			<div class='tourItem'>
 					<div class='tourImage' styl='background-image: url({{image}})'></div>
 					<div class='tourInfo'>
-						<div class='tourTitle'>{{title}}</div>
+						<div class='tourTitle'>{{name}}</div>
 						<div class='tourRating'>{{rating}} star</div>
 						<div class='tourAddress'>{{vicinity}}</div>
-						<div class='tourReview'>{{review}}</div>
+						<div class='tourReview'>Example review until yelp gets working</div>
 					</div>
 					<div class='numberOfItems'>
 						<span class='currentItemNumber'>1</span>of <span class='totalItemNumbers'>5</span> items
@@ -32,7 +35,7 @@
 	<div id='wrapper'>
 		<div id='logo'/></div>
 		<div id='startTour'>
-			<input type='text' placeholder='Location' />
+			<input type='text' id='addressField' placeholder='Location' />
 			<button>Start tour</button>
 			<div id='refineResults'>Or tap here to start a custom tour</div>
 		</div>
