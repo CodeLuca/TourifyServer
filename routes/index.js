@@ -4,6 +4,7 @@ var http = require('http');
 var https = require('https');
 var keys = require('../keys.js');
 var path = require('path');
+var salesman = require('../salesman.js');
 
 var globalRes = '';
 var globalReq = '';
@@ -109,6 +110,9 @@ function httpsGet(url, callback) {
 router.get('/', function(req, res) {
 	res.sendfile('index.html')
 });
+router.get('/webapp', function(req,res) {
+	res.sendfile('web	app.html')
+})
 router.get('/index.html', function(req, res) {
 	res.sendfile('index.html')
 });
@@ -255,77 +259,20 @@ function getBingImages(POIs) {
 }
 
 function getDistancesFromOrigin(POIs) {
-	//Get total number of items to return
-	globalNumReturnItems = POIs.length;
-	//Loop through all POI's
-	//Keep a total to know when requests are done as they're async.
-	var total = 1;
-	POIs[0].distance = 0;
-	var originPOI = POIs[0];
-	var finalPOIs = [originPOI];
-
-	function getDistance(POI) {
-		httpsGet(apiUrls.google.distance({
-				origin: {
-					lat: originPOI.geometry.location.lat,
-					lng: originPOI.geometry.location.lng
-				},
-				destination: {
-					lat: POI.geometry.location.lat,
-					lng: POI.geometry.location.lng
-				},
-				mode: 'walking'
-		}), function(json) {
-			POI.distance = json.rows[0].elements[0].distance.value;
-			finalPOIs.push(POI);
-			if(++total === POIs.length-1) {
-				console.log('Got distances OK')
-				makeLoop(finalPOIs);
-			}
-		});
+	var finalPOIs = [];
+	//Use this too set the limit (1 - the number tho)
+	for(var i = 0; i < 5; ++i) {
+		finalPOIs.push(POIs[i]);
 	}
+	var order = salesamn(finalPOIs);
+	var newArr = new Array(order.length);
+	order.forEach(function(num) {
+		newArr[num] = finakPOIs[num]
+	})
 
-	for(var i = 1; i < POIs.length; ++i) {
-		getDistance(POIs[i]);
-	}
-}
-
-//Sort POI's by distance from origin (0)
-//Then form them into a 'loop'
-function makeLoop(POIs) {
-	//Sorts by distance in increasing order
-	//(i.e. 3,4,1,2 -> 1,2,3,4)
-	function sortByDistance(a, b) {
-		if(a.distance < b.distance) {
-			return -1;
-		} else if(a.distance > b.distance) {
-			return 1;
-		}
-		return 0;
-	}
-
-	//Creates 'loop' from sorted values
-	//(i.e. 1,2,3,4 -> 14321)
-	function formLoop(arr) {
-		var b = [arr[arr.length-1]];
-		for(var i = arr.length-2; i >= 0; --i) {
-			if(!(i % 2)) {
-				b.unshift(arr[i]);
-			} else {
-				b.push(arr[i]);
-			}
-		}
-		//For now comment out because it makes it look like a duplicate result error
-		//(It's not really, it's to meet the end of the loop, but who gives a toss - amirite?)
-		//b.push(arr[0]);
-		return b;
-	}
-
-	var sortedPOIs = POIs.sort(sortByDistance);
-	var loopedPOIs = formLoop(sortedPOIs);
 	globalRes.json({
-		numberOfResults: globalNumReturnItems,
-		results: loopedPOIs
+		numberOfResults: newArr.length,
+		results: newArr
 	});
 }
 

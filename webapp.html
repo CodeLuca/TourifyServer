@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="css/app.css" type="text/css" />
+	<script type="text/template">
+		{{#each POIs}}
+			<div class='tourItem'>
+					<div class='tourImage' styl='background-image: url({{image}})'></div>
+					<div class='tourInfo'>
+						<div class='tourTitle'>{{title}}</div>
+						<div class='tourRating'>{{rating}} star</div>
+						<div class='tourAddress'>{{vicinity}}</div>
+						<div class='tourReview'>{{review}}</div>
+					</div>
+					<div class='numberOfItems'>
+						<span class='currentItemNumber'>1</span>of <span class='totalItemNumbers'>5</span> items
+					</div>
+			</div>
+		{{/each}}
+	</script>
+	<script type="text/javascript" src="js/handlebars.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+<body>
+</body>
+	<div class='modal'>
+	Unfortunately, your device does not 
+	allow using location services, so enter your location (address, post code, etc) in the box manually
+	<button>OK</button>
+	</div>
+	<div id='wrapper'>
+		<div id='logo'/></div>
+		<div id='startTour'>
+			<input type='text' placeholder='Location' />
+			<button>Start tour</button>
+			<div id='refineResults'>Or tap here to start a custom tour</div>
+		</div>
+		<!--<div class="contentBox">
+			<div class="title">
+				<span class="number"></span>
+				<h2>Title</h2>
+			</div>
+			<p>
+				Lorem ipsum dolor sit amet; neqour amem hic regibus mihi estis
+				Lorem ipsum dolor sit amet; neqour amem hic regibus mihi estis
+			</p>
+			<img class="map"/>
+			<div class="more info">
+				More information
+			</div>
+			<div class="less info">
+				Less information
+			</div>
+		</div>-->
+	</div>
+	<footer>Tourify Inc. 2014 YRS</footer>
+</html>
