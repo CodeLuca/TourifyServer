@@ -4,7 +4,6 @@
 		var lons = [];
 		var total = 0;
 		for(var i = 0; i < coordinates.length-1; ++i) {
-			console.log('here')
 		    lats.push(coordinates[i].geometry.location.lat); 
 		    lons.push(coordinates[i].geometry.location.lng);
 		}

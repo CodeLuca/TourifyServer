@@ -270,7 +270,7 @@ function getDistancesFromOrigin(POIs) {
 	order.forEach(function(num) {
 		newArr[num] = finalPOIs[num]
 	})
-
+	newArr.pop();
 	globalRes.json({
 		numberOfResults: newArr.length,
 		results: newArr
