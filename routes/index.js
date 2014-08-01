@@ -4,7 +4,6 @@ var http = require('http');
 var https = require('https');
 var keys = require('../keys.js');
 var path = require('path');
-var yelp = require('yelp')
 var salesman = require('../salesman.js');
 
 var globalRes = '';
@@ -249,7 +248,7 @@ function getBingImages(POIs) {
 				filteredPOIs.push(POI);
 				if(++total === POIs.length-1) {
 					console.log('Got bing images OK')
-					getDistancesFromOrigin(filteredPOIs);
+					getYelpShiznits(filteredPOIs);
 				}
 			});
 		});
@@ -259,10 +258,34 @@ function getBingImages(POIs) {
 	}
 }
 
+function getYelpShiznits(POIs) {
+	var total = 0;
+	var yelp = require("yelp").createClient(keys.yelp);
+	var filteredPOIs = [];
+
+	function getYelp(POI) {
+		yelp.search({
+			term: POI.name,
+			location: POI.vicinity,
+			cll: POI.geometry.location.lat + ',' + POI.geometry.location.lng
+		}, function(error, data) {
+			POI.yelp = data.businesses[0];
+			filteredPOIs.push(POI);
+			if(++total === POIs.length-1) {
+				getDistancesFromOrigin(filteredPOIs);
+			}
+		});
+	}
+
+	for(var i = 0; i < POIs.length; ++i) {
+		getYelp(POIs[i])
+	}
+}
+
 function getDistancesFromOrigin(POIs) {
 	var finalPOIs = [];
 	//Use this too set the limit (1 - the number tho)
-	for(var i = 0; i < 5; ++i) {
+	for(var i = 0; i < POIs.length; ++i) {
 		finalPOIs.push(POIs[i]);
 	}
 	var order = salesman(finalPOIs);
