@@ -3,8 +3,39 @@ $(document).ready(function() {
 
 	$('#startTour button').click(getCoordinates);
 	$('.modal button').click(dismissModal);
+	$(document).ajaxStart(showAjaxSpinner);
+  	$(document).ajaxStop(hideAjaxSpinner);
+  	$('body').on('click', '#finalise', getMap)
 
 	/*Event handler functions*/
+
+	function getMap() {
+		var directionsService = new google.maps.DirectionsService();
+		var directionsDisplay;
+		var source = $('#mapTemplate').html();
+		var template = Handlebars.compile(source);
+		$('#wrapper').fadeOut(function() {
+			$('#wrapper').html(template());
+			$('#wrapper').fadeIn();
+		});
+		$('body').on('ready', '#mapCanvas', function() {
+			alert('Ready')
+			var mapOptions = {
+          		center: new google.maps.LatLng(-34.397, 150.644),
+          		zoom: 8
+        	};
+        	var map = new google.maps.Map(document.getElementById("mapCanvas"),mapOptions);
+      	})
+      	alert('Hi')
+   	}
+
+	function showAjaxSpinner() {
+		$('#loader, #overlay').fadeIn()
+	}
+
+	function hideAjaxSpinner() {
+		$('#loader, #overlay').fadeOut();
+	}
 
 	function getCoordinates() {
 		//If the device supports geolocation
@@ -61,7 +92,7 @@ $(document).ready(function() {
 			}
 		}, function(result, status) {
 			if(status === 'OK') {
-				var address = results[0].formatted_address;
+				var address = result[0].formatted_address;
 				getJson({
 					address: address,
 					lat: lat,
@@ -74,12 +105,15 @@ $(document).ready(function() {
 	/*AJAX requests*/
 
 	function getJson(paramObj) {
-		alert(JSON.stringify(paramObj))
+		$.get('/json', paramObj, function(data) {
+			data.numberOfResults = data.numberOfResults-1;
+			nextPage(data);
+		})
 	}
 	
 	/*View changes*/
 
-	function nextPage() {
+	function nextPage(data) {
 		var source = $('#locations').html();
 		var template = Handlebars.compile(source);
 		$('#wrapper').fadeOut(function() {
@@ -88,12 +122,6 @@ $(document).ready(function() {
 		});
 		
 	}
-
-	$('.tourItem').each(function(i, el) {
-		$(el).attr('id', i);
-		$(el).find('.currentItemNumber').html(i+1);
-		$(el).find('.totalItemNumbers').html($('.tourItem').length);
-	});
 
 	
 });
