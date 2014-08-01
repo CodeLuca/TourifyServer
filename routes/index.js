@@ -171,7 +171,7 @@ function getPlaces() {
 	}), function(json) {
 		if(json.results.length) {
 			console.log('Got places')
-			removeYeDuplicateTypes(json.results);
+			getBingImages(json.results);
 		} else {
 			console.log('Couldnt get places')
 			globalRes.json(json);
@@ -262,6 +262,7 @@ function getYelpShiznits(POIs) {
 	var total = 0;
 	var yelp = require("yelp").createClient(keys.yelp);
 	var filteredPOIs = [];
+	var length = 7;
 
 	function getYelp(POI) {
 		yelp.search({
@@ -271,18 +272,23 @@ function getYelpShiznits(POIs) {
 		}, function(error, data) {
 			POI.yelp = data.businesses[0];
 			filteredPOIs.push(POI);
-			if(++total === POIs.length-1) {
+			if(++total === length) {
 				getDistancesFromOrigin(filteredPOIs);
 			}
 		});
 	}
 
-	for(var i = 0; i < POIs.length; ++i) {
+	if(POIs.length < 7) {
+		length = POIs.length;
+	}
+	console.log(length)
+	for(var i = 0; i < length; ++i) {
 		getYelp(POIs[i])
 	}
 }
 
 function getDistancesFromOrigin(POIs) {
+	console.log(POIs.length)
 	var finalPOIs = [];
 	//Use this too set the limit (1 - the number tho)
 	for(var i = 0; i < POIs.length; ++i) {
