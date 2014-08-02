@@ -37,6 +37,16 @@
 		<div id='mapCanvas'></div>
 		<button id='print' onclick='window.print()'>Print this map</button>
 	</script>
+	<script id='instructions' type="text/x-handlebars-template">
+		{{#each instructions}}
+			<div class='directions' data-startlat='{{start_location.lat}}' data-startlng='{{start_location.lng}}' data-endlat='{{end_location.lat}}' data-endlng='{{end_location.lng}}'>
+				<img src='/img/arrow_left.png' class='leftArrow' />
+				<img src='/img/arrow_right.png' class='rightArrow' />
+				<div class='content'>{{{instructions}}}</div>
+				<div class='numberOfInstructions'><span class='instructionIndex'>{{@index}}</span> of <span class='totalInstructions'></span> instructions</div>
+			</div>
+		{{/each}}
+	</script>
 	<script type="text/javascript" src="js/handlebars.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>

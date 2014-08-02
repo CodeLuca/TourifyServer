@@ -366,6 +366,27 @@ footer {
 	display: none;
 }
 
+.directions {
+	display: none;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 4em;
+	position: relative;
+}
+
+.leftArrow, .rightArrow {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+}
+.leftArrow {
+	left: 5px;
+}
+.rightArrow {
+	right: 5px;
+}
+
 @media (max-width: 400px) {
 	html body {
 		font-size: 0.75em;

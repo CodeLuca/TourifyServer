@@ -75,11 +75,37 @@ $(document).ready(function() {
 				if(status === 'OK') {
 					var mapOptions = {
 	        			center: new google.maps.LatLng(json.results[0].geometry.location.lat, json.results[0].geometry.location.lng),
-	        			zoom: 18
+	        			zoom: 20
 	       			};
 	        		var map = new google.maps.Map(document.getElementById("mapCanvas"),mapOptions);
 	        		directionsDisplay.setMap(map);
 	        		directionsDisplay.setDirections(result);
+	        		var source = $('#instructions').html();
+	        		var template = Handlebars.compile(source);
+
+	        		var stepObjects = [];
+	        		var context = {};
+	        		result.routes[0].legs.forEach(function(instruction) {
+	        			instruction.steps.forEach(function(obj) {
+	        				stepObjects.push(obj);
+	        			})
+	        		});
+
+	        		context.numberOfResults = stepObjects.length - 1;
+	        		context.instructions = stepObjects;
+	        		console.log(context.instructions[0].instructions)
+	        		var html = template(context);
+	        		$('#wrapper').append(html)
+
+	        		$('.directions:first').show()
+	        		map.setCenter({
+	        			lat: +$('.directions:first').data('startlat'),
+	        			lng: +$('.directions:first').data('startlng')
+	        		});
+
+	        		//Event listeners
+	        		
+
 				} else {
 					alert(JSON.stringify(status));
 				}
