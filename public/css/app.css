@@ -106,7 +106,7 @@ input[type="text"] {
 	border: 2px solid #319E22;
 	border-radius: 3px;
 	box-sizing: border-box;
-	font-family: 'Segoe UI';
+	font-family: 'Segoe UI', sans-serif;
 	display: block;
 	margin: 0 auto;
 	transition: background-color 0.5s, color 0.5s, border 0.5s;
@@ -131,7 +131,7 @@ input[type="text"] {
 	border-radius: 3px;
 	box-sizing: border-box;
 	text-align: center;
-	font-family: 'Segoe UI';
+	font-family: 'Segoe UI', sans-serif;
 	display: block;
 	font-size: 1em;
     margin: -2em auto 2em;
@@ -168,7 +168,7 @@ input[type="text"] {
 	border: 2px solid #319E22;
 	border-radius: 3px;
 	box-sizing: border-box;
-	font-family: 'Segoe UI';
+	font-family: 'Segoe UI', sans-serif;
 	font-size: 1.75em;
 	display: block;
 	margin: 0 auto;
@@ -197,7 +197,7 @@ input[type="text"] {
 	border: 2px solid #319E22;
 	border-radius: 3px;
 	box-sizing: border-box;
-	font-family: 'Segoe UI';
+	font-family: 'Segoe UI', sans-serif;
 	display: block;
 	margin: 0 auto;
 	transition: background-color 0.5s, color 0.5s, border 0.5s;
