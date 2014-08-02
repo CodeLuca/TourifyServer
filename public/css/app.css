@@ -98,6 +98,30 @@ input[type="text"] {
 	overflow: auto;
 }
 
+#print {
+	text-align: center;
+	background-color: #5fb336;
+	margin-top: 1em;
+	color: #FFFFFF;
+	border: 2px solid #319E22;
+	border-radius: 3px;
+	box-sizing: border-box;
+	font-family: 'Segoe UI';
+	display: block;
+	margin: 0 auto;
+	transition: background-color 0.5s, color 0.5s, border 0.5s;
+}
+#print:hover {
+	color: #5fb336;
+	background-color: #FFFFFF;
+	border: 2px solid #5fb336;
+}
+#print:active {
+	background-color: #D6D6D6;
+}
+
+
+
 #finalise {
 	height: 1.75em;
 	text-align: center;
