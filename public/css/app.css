@@ -108,9 +108,9 @@ input[type="text"] {
 	box-sizing: border-box;
 	text-align: center;
 	font-family: 'Segoe UI';
-	font-size: 1.75em;
 	display: block;
-	margin: 0 auto;
+	font-size: 1em;
+    margin: -2em auto 2em;
 	transition: background-color 0.5s, color 0.5s, border 0.5s;
 }
 
