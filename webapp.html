@@ -3,11 +3,11 @@
 <head>
 	<link rel="stylesheet" href="css/app.css" type="text/css" />
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4"></script>
-	<script type="text/javascript" src="js/data.js"></script>
 	<script id='locations' type="text/x-handlebars-template">
 		<div id='logo'/></div>
 		{{#each results}}
 			<div class='tourItem'>
+					<img src='/img/cross.png' class='delete' />
 					<div class='tourImage' style='background-image: url({{image}})'></div>
 					<div class='tourInfo'>
 						<div class='tourTitle'>{{name}}</div>
@@ -33,10 +33,35 @@
 <body>
 	<img src='/img/load.gif' id='loader'/>
 	<div id='overlay'></div>
-	<div class='modal'>
-	Unfortunately, your device does not 
-	allow using location services, so enter your location (address, post code, etc) in the box manually
-	<button>OK</button>
+	<div class='modal' id='locationError'>
+		Unfortunately, your device does not 
+		allow using location services, so enter your location (address, post code, etc) in the box manually
+		<button>OK</button>
+	</div>
+	<div class='modal' id='options'>
+		<form>
+			<b>Duration for tour:</b><br/>
+			<select name='radius'>
+				<option value='500'>1/2 km</option>
+				<option value='1000'>1 km</option>
+				<option value='2000'>2 km</option>
+				<option value='3000' selected>3 km</option>
+				<option value='4000'>4 km</option>
+			</select><br/>
+			<b>Mode of transport:</b><br/>
+			<input type='radio' name='transport' checked value='WALKING' /> Walking 
+			<input type='radio' name='transport' value='BICYCLING' /> Bike 
+			<input type='radio' name='transport' value='DRIVING' /> Driving 
+			<b>Itinerary categories:</b><br/>
+			<input type='checkbox' name='categories' checked value='amusement_park' /> Amusement park <br/>
+			<input type='checkbox' name='categories' checked value='aquarium' /> Aquarium <br/>
+			<input type='checkbox' name='categories' checked value='establishment' /> Buildings of interest/sites <br/>
+			<input type='checkbox' name='categories' checked value='park' /> Park <br/>
+			<input type='checkbox' name='categories' checked value='art_gallery' /> Art gallery <br/>
+			<input type='checkbox' name='categories' checked value='church|place_of_worship' /> Cathedral/monastery <br/>
+			<input type='checkbox' name='categories' checked value='zoo' /> Zoo
+		</form>
+		<button>OK</button>
 	</div>
 	<div id='wrapper'>
 		<div id='logo'/></div>
@@ -45,23 +70,6 @@
 			<button>Start tour</button>
 			<div id='refineResults'>Or tap here to start a custom tour</div>
 		</div>
-		<!--<div class="contentBox">
-			<div class="title">
-				<span class="number"></span>
-				<h2>Title</h2>
-			</div>
-			<p>
-				Lorem ipsum dolor sit amet; neqour amem hic regibus mihi estis
-				Lorem ipsum dolor sit amet; neqour amem hic regibus mihi estis
-			</p>
-			<img class="map"/>
-			<div class="more info">
-				More information
-			</div>
-			<div class="less info">
-				Less information
-			</div>
-		</div>-->
 	</div>
 	<footer>Tourify Inc. 2014 YRS</footer>
 </body>

@@ -1,15 +1,52 @@
 $(document).ready(function() {
-	var json = '';
+	var json;
+	var params = {};
 
 	/*Event handlers*/
 
 	$('#startTour button').click(getCoordinates);
-	$('.modal button').click(dismissModal);
+	$('#locationError button').click(dismissModal);
 	$(document).ajaxStart(showAjaxSpinner);
   	$(document).ajaxStop(hideAjaxSpinner);
-  	$('body').on('click', '#finalise', getMap)
+  	$('body').on('click', '#finalise', getMap);
+  	$('#refineResults').click(showOptionsModal);
+  	$('#options button').click(hideOptionsModal);
+  	$('body').on('click', '.tourItem .delete', deleteTourItem)
 
 	/*Event handler functions*/
+
+	function deleteTourItem() {
+		function remove(arr, index) {
+    		return arr.splice(index, 1)
+		}
+
+		var id = +$(this).parent().find('.currentItemNumber');
+		remove(json.results, id);
+		$(this).parent().fadeOut();
+	}
+
+	function hideOptionsModal() {
+		if($('#options').is(':visible')) {
+			var transport = $('input[name=transport]:checked', '#options form').val();
+			var radius = $('select', '#options form').find(":selected").val();
+			var categories = '';
+			$('input[name=categories]:checked').each(function(k, el) {
+				categories += $(el).val() + ',';
+			});
+
+			categories = categories.substring(0, categories.length -1);
+
+			params.transport = transport;
+			params.radius = radius;
+			params.categories = categories;
+		}
+		$('#options').fadeOut();
+		$('#refineResults').fadeOut();
+	}
+
+	function showOptionsModal() {
+		$('#options').fadeIn();
+	}
 
 	function getMap() {
 		var source = $('#mapTemplate').html();
@@ -26,12 +63,13 @@ $(document).ready(function() {
 			for(var i = 1; i < json.results.length; ++i) {
 				waypointsArray.push({
 					location: new google.maps.LatLng(json.results[i].geometry.location.lat, json.results[i].geometry.location.lng)
-				})
+				});
 			}
 			directionsService.route({
 				origin: new google.maps.LatLng(json.results[0].geometry.location.lat, json.results[0].geometry.location.lng),
+				optimizeWaypoints: true ,
 				destination: new google.maps.LatLng(json.results[0].geometry.location.lat, json.results[0].geometry.location.lng),
-				travelMode: google.maps.TravelMode.WALKING,
+				travelMode: google.maps.TravelMode[params.transport] || 'WALKING',
 				waypoints: waypointsArray
 			}, function(result, status) {
 				if(status === 'OK') {
@@ -41,16 +79,16 @@ $(document).ready(function() {
 	       			};
 	        		var map = new google.maps.Map(document.getElementById("mapCanvas"),mapOptions);
 	        		directionsDisplay.setMap(map);
-	        		directionsDisplay.setDirections(result)
+	        		directionsDisplay.setDirections(result);
 				} else {
-					alert(JSON.stringify(status))
+					alert(JSON.stringify(status));
 				}
 			});
    		}, 1000);
    	}
 
 	function showAjaxSpinner() {
-		$('#loader, #overlay').fadeIn()
+		$('#loader, #overlay').fadeIn();
 	}
 
 	function hideAjaxSpinner() {
@@ -61,7 +99,7 @@ $(document).ready(function() {
 		//If the device supports geolocation
 		if(navigator.geolocation) {
 			//Get locations
-			navigator.geolocation.getCurrentPosition(getLocationParams, locationError)
+			navigator.geolocation.getCurrentPosition(getLocationParams, locationError);
 		} else {
 			//Show error, and force user to enter location manually
 			locationError();
@@ -69,7 +107,7 @@ $(document).ready(function() {
 	}
 
 	function dismissModal() {
-		$('.modal').fadeOut();
+		$('#locationError').fadeOut();
 		$('#startTour input[type=text]').slideDown();
 	}
 
@@ -78,7 +116,7 @@ $(document).ready(function() {
 		$('#startTour button')
 			.unbind('click')
 			.click(reverseGeocode);
-		$('.modal').fadeIn();
+		$('#locationError').fadeIn();
 	}
 
 	/*General functions*/
@@ -95,7 +133,7 @@ $(document).ready(function() {
 					}
 				});
 			} else {
-				alert('Crap something horrible went wrong')
+				alert('Crap something horrible went wrong');
 			}
 		});
 	}
@@ -117,7 +155,7 @@ $(document).ready(function() {
 					address: address,
 					lat: lat,
 					lng: lng
-				})
+				});
 			}
 		});
 	}
@@ -125,11 +163,15 @@ $(document).ready(function() {
 	/*AJAX requests*/
 
 	function getJson(paramObj) {
+			paramObj.transport = params.transport;
+			paramObj.radius = params.radius;
+			paramObj.categories = params.categories;
+
 		$.get('/json', paramObj, function(data) {
 			json = data;
 			data.numberOfResults = data.numberOfResults-1;
 			nextPage(data);
-		})
+		});
 	}
 	
 	/*View changes*/

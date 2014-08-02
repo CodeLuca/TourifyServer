@@ -50,7 +50,9 @@ var apiUrls = {
 				paramObj.lat +
 				',' +
 				paramObj.lng +
-				'&radius=3000&open&keyword=tourist%20attraction&key=' +
+				'&radius=' +
+				paramObj.radius +
+				'&open&keyword=tourist%20attraction&key=' +
 				keys.google;
 			return url;
 		},
@@ -153,13 +155,29 @@ function getWeather(weather) {
 	//(i.e. not rain)
 	var goodWeatherCodes = [113, 116, 119, 122, 143];
 	//All weather categories to search for
-	var placeCategories = 'amusement_park|aquarium|art_gallery|church|establishment|museum|place_of_worship';
+	var userCategories;
+	var outdoor;
+	function remove(arr, thing) {
+    	var index = arr.indexOf(thing)
+    	return arr.splice(index, 1)
+	}
+	if(globalReq.query.categories) {
+		outdoor = [];
+		userCategories = globalReq.query.categories.split(',');
+		outdoor.push(remove(userCategories, 'parks'));
+		outdoor.push(remove(userCategories, 'zoo'));
+		userCategories = userCategories.join('|')
+		outdoor = '|' + outdoor.join('|');
+	}
+
+
+	var placeCategories = userCategories || 'amusement_park|aquarium|art_gallery|church|establishment|museum|place_of_worship';
 	//Weather code from location (`+` converts to number)
 	var weatherCode = +weather.data.current_condition[0].weatherCode;
 	if(typeof weatherCode === 'number')
 	//If `weatherCode` is not is in `goodWeatherCodes` then add outdoor categories
 	if(goodWeatherCodes.indexOf(weatherCode) !== -1) {
-		placeCategories += '|park|zoo';
+		placeCategories += outdoor || '|park|zoo';
 	}
 	getPlaces(placeCategories);
 }
@@ -167,7 +185,8 @@ function getWeather(weather) {
 function getPlaces() {
 	httpsGet(apiUrls.google.places({
 		lat: globalReq.query.lat,
-		lng: globalReq.query.lng
+		lng: globalReq.query.lng,
+		radius: globalReq.query.radius || 3000
 	}), function(json) {
 		if(json.results.length) {
 			console.log('Got places')
@@ -243,9 +262,11 @@ function getBingImages(POIs) {
 				chunks.push(chunk);
 			}).on('end', function() {
 				var searchResults = JSON.parse(chunks.join(''));
-				var url = searchResults.d.results[0].MediaUrl;
-				POI.image = url;
-				filteredPOIs.push(POI);
+				if(searchResults.d.results[0]) {
+					var url = searchResults.d.results[0].MediaUrl;
+					POI.image = url;
+					filteredPOIs.push(POI);
+				}
 				if(++total === POIs.length-1) {
 					console.log('Got bing images OK')
 					getYelpShiznits(filteredPOIs);

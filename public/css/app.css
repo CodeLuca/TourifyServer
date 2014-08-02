@@ -20,6 +20,14 @@ form {
 	position: absolute;
 }
 
+#options {
+	width: 15em;
+	height: 20em;
+}
+#options form {
+	width: 15em;
+}
+
 #overlay {
 	position: absolute;
 	z-index: 4;
@@ -105,6 +113,11 @@ input[type="text"] {
 	margin: 0 auto;
 	transition: background-color 0.5s, color 0.5s, border 0.5s;
 }
+
+#options {
+	display: none;
+}
+
 #finalise:hover {
 	color: #5fb336;
 	background-color: #FFFFFF;
@@ -112,6 +125,10 @@ input[type="text"] {
 }
 #finalise:active {
 	background-color: #D6D6D6;
+}
+
+#startTour form {
+	width: 15em;
 }
 
 #mapCanvas {
@@ -199,6 +216,13 @@ footer {
 	border-radius: 0.5em;
 	background-color: #FFFFFF;
 	position: relative;
+}
+
+.delete {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	cursor: pointer;
 }
 
 .tourImage {
