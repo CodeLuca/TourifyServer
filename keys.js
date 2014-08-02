@@ -10,7 +10,7 @@ var keys = {
 	},
 	google: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4',
 	original: 'AIzaSyBUzkW2Z2hPkHBjtXJKu4SIuvHUHYNmgc4',
-	bing: 'gf0pHDu/95LreYUKYPVUjMACyUxGhnj41he+pcEGrCI'
+	bing: 'eEaPIhnfvI3ld3BreKTrbSm0RLLbEOQSdLf+FA9zYmA'
 };
 
 module.exports = keys;
