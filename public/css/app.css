@@ -122,7 +122,7 @@ input[type="text"] {
 	box-sizing: border-box;
 	font-family: 'Segoe UI', sans-serif;
 	display: block;
-	margin: 0 auto;
+	margin: 1em auto 0 auto;
 	transition: background-color 0.5s, color 0.5s, border 0.5s;
 }
 #print:hover {

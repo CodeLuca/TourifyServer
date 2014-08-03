@@ -117,7 +117,6 @@ $(document).ready(function() {
 
 	        		//Event listeners
 
-	        		map.setZoom(17)
 
 	        		$('.directions .leftArrow').click(function() {
 	        			var index = +$(this).parent().find('.instructionIndex').html();
@@ -129,7 +128,6 @@ $(document).ready(function() {
 			        			lat: directionObjs[index].start_location.lat(),
 			        			lng: directionObjs[index].start_location.lng()
 	        				});
-	        				map.setZoom(18)
 	        			}
 	        		});
 
@@ -140,7 +138,6 @@ $(document).ready(function() {
 	        				$(this).parent().fadeOut();
 	        				var el = $('.directions')[index+1];
 	        				$(el).fadeIn();
-	        				console.log(result.routes[0].legs[0])
 
 	        				if(result.routes[0].legs[i])
 
@@ -148,7 +145,6 @@ $(document).ready(function() {
 			        			lat: directionObjs[index].start_location.lat(),
 			        			lng: directionObjs[index].start_location.lng()
 	        				});
-	        				map.setZoom(18)
 	        			}
 	        		});
 
@@ -188,6 +184,7 @@ $(document).ready(function() {
 	//Show error message
 	function locationError() {
 		hideAjaxSpinner();
+		$('#overlayMessage').fadeOut();
 		$('#getLocation img').hide();
 		$('#startTour input[type=text]').css('padding-right', '3px')
 		$('#locationError').fadeIn();
@@ -210,7 +207,7 @@ $(document).ready(function() {
 					lng: globalLng
 				})
 			} else {
-				alert('Error');
+				alert('Error nothing in field');
 			}
 		});
 	}
