@@ -8,7 +8,7 @@ body, html {
 }
 
 body {
-	background-color: #90c277;	
+	background-color: #9bff61;	
 }
 
 form {
@@ -91,7 +91,7 @@ input[type="text"] {
 
 #startTour {
 	position: absolute;
-	height: 4em;
+	height: 8em;
 	width: 15em;
 	top: 0;
 	bottom: 0;
@@ -175,7 +175,7 @@ input[type="text"] {
 }
 
 #startTour button {
-	height: 3.5em;
+	height: 1.75em;
 	text-align: center;
 	background-color: #5fb336;
 	color: #FFFFFF;
@@ -198,10 +198,20 @@ input[type="text"] {
 }
 #startTour input[type='text'] {
 	width: 10em;
-	display: none;
 	font-size: 1.5em;
 	margin-bottom: 0.5em;
+	padding-right: 38px;
 	box-sizing: border-box;
+}
+
+#getLocation {
+	position: relative;
+}
+#getLocation img {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+
 }
 
 .modal button {
@@ -242,7 +252,7 @@ footer {
 	border-top: 1px solid gray;
 	position: fixed;
 	bottom: 0;
-	background-color: #90c277;
+	background-color: #96ff61;
 	width: 100%;
 }
 

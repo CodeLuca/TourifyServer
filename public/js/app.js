@@ -1,10 +1,24 @@
 $(document).ready(function() {
 	var json;
 	var params = {};
+	var globalLat;
+	var globalLng;
+	var globalAddress;
 
 	/*Event handlers*/
 
-	$('#startTour button').click(getCoordinates);
+	$('#getLocation img').click(getCoordinates);
+	$('#startTour button').click(function() {
+		if(globalLat) {
+			getJson({
+				address: globalAddress,
+				lat: globalLat,
+				lng: globalLng
+			})
+		} else {
+			reverseGeocode();
+		}
+	});
 	$('#locationError button').click(dismissModal);
 	$(document).ajaxStart(showAjaxSpinner);
   	$(document).ajaxStop(hideAjaxSpinner);
@@ -103,8 +117,6 @@ $(document).ready(function() {
 
 	        		//Event listeners
 
-	        		var i = 0;
-
 	        		map.setZoom(17)
 
 	        		$('.directions .leftArrow').click(function() {
@@ -117,6 +129,7 @@ $(document).ready(function() {
 			        			lat: directionObjs[index].start_location.lat(),
 			        			lng: directionObjs[index].start_location.lng()
 	        				});
+	        				map.setZoom(18)
 	        			}
 	        		});
 
@@ -135,6 +148,7 @@ $(document).ready(function() {
 			        			lat: directionObjs[index].start_location.lat(),
 			        			lng: directionObjs[index].start_location.lng()
 	        				});
+	        				map.setZoom(18)
 	        			}
 	        		});
 
@@ -159,15 +173,10 @@ $(document).ready(function() {
 			//Get locations
 			$('#loader, #overlay').fadeIn();
 			$('#overlayMessage').html('Getting your location...').fadeIn();
-			setTimeout(function() {
-				$('#overlayMessage').fadeOut(function() {
-					$('#overlayMessage').html('')
-				});
-			}, 2000)
-			navigator.geolocation.getCurrentPosition(getLocationParams, locationError);
+			navigator.geolocation.getCurrentPosition(getLocationParamsAuto, locationError);
 		} else {
-			//Show error, and force user to enter location manually
-			locationError();
+			$('#getLocation img').hide();
+			$('#startTour input[type=text]').css('padding-right', '3px')
 		}
 	}
 
@@ -179,9 +188,8 @@ $(document).ready(function() {
 	//Show error message
 	function locationError() {
 		hideAjaxSpinner();
-		$('#startTour button')
-			.unbind('click')
-			.click(reverseGeocode);
+		$('#getLocation img').hide();
+		$('#startTour input[type=text]').css('padding-right', '3px')
 		$('#locationError').fadeIn();
 	}
 
@@ -192,36 +200,36 @@ $(document).ready(function() {
 		var geocoder = new google.maps.Geocoder();
 		geocoder.geocode({address: val}, function(result, status) {
 			if(status === 'OK') {
-				getLocationParams({
-					coords: {
-						latitude: result[0].geometry.location.lat(),
-						longitude: result[0].geometry.location.lng()
-					}
-				});
+				$('#startTour input[type=text]').val(result[0].formatted_address)
+				globalLat = result[0].geometry.location.lat();
+				globalLng = result[0].geometry.location.lng()
+				globalAddress = result[0].formatted_address;
+				getJson({
+					address: globalAddress,
+					lat: globalLat,
+					lng: globalLng
+				})
 			} else {
-				alert('Crap something horrible went wrong');
+				alert('Error');
 			}
 		});
 	}
 
-	function getLocationParams(obj) {
-		var lat = obj.coords.latitude;
-		var lng = obj.coords.longitude;
+	function getLocationParamsAuto(obj) {
+		globalLat = obj.coords.latitude;
+		globalLng = obj.coords.longitude;
 
 		var geocoder = new google.maps.Geocoder();
 		geocoder.geocode({
 			location: {
-				lat: lat,
-				lng: lng
+				lat: globalLat,
+				lng: globalLng
 			}
 		}, function(result, status) {
 			if(status === 'OK') {
-				var address = result[0].formatted_address;
-				getJson({
-					address: address,
-					lat: lat,
-					lng: lng
-				});
+				$('#startTour input[type=text]').val(result[0].formatted_address)
+				globalAddress = result[0].formatted_address;
+				$('#loader, #overlay, #overlayMessage').fadeOut();
 			}
 		});
 	}

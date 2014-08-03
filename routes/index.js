@@ -179,6 +179,7 @@ function getWeather(weather) {
 	if(goodWeatherCodes.indexOf(weatherCode) !== -1) {
 		placeCategories += outdoor || '|park|zoo';
 	}
+	console.log(placeCategories)
 	getPlaces(placeCategories);
 }
 
