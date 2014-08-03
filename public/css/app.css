@@ -411,7 +411,7 @@ footer {
 	right: 5px;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
 	html body {
 		font-size: 0.75em;
 	}
@@ -439,7 +439,7 @@ footer {
 		border-color: #FFFFFF;
 	}
 }
-@media (min-width: 400px) and (max-width: 825px) {
+@media (min-width: 480px) and (max-width: 825px) {
 	body #wrapper {
 		width: 70%;
 	}
