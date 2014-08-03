@@ -75,7 +75,7 @@ $(document).ready(function() {
 				if(status === 'OK') {
 					var mapOptions = {
 	        			center: new google.maps.LatLng(json.results[0].geometry.location.lat, json.results[0].geometry.location.lng),
-	        			zoom: 20
+	        			zoom: 19
 	       			};
 	        		var map = new google.maps.Map(document.getElementById("mapCanvas"),mapOptions);
 	        		directionsDisplay.setMap(map);
@@ -84,27 +84,59 @@ $(document).ready(function() {
 	        		var template = Handlebars.compile(source);
 
 	        		var stepObjects = [];
+	        		var directionObjs = [];
 	        		var context = {};
+	        		console.log(result)
 	        		result.routes[0].legs.forEach(function(instruction) {
 	        			instruction.steps.forEach(function(obj) {
+	        				directionObjs.push(obj)
 	        				stepObjects.push(obj);
 	        			})
 	        		});
 
 	        		context.numberOfResults = stepObjects.length - 1;
 	        		context.instructions = stepObjects;
-	        		console.log(context.instructions[0].instructions)
 	        		var html = template(context);
 	        		$('#wrapper').append(html)
 
 	        		$('.directions:first').show()
-	        		map.setCenter({
-	        			lat: +$('.directions:first').data('startlat'),
-	        			lng: +$('.directions:first').data('startlng')
-	        		});
 
 	        		//Event listeners
-	        		
+
+	        		var i = 0;
+
+	        		map.setZoom(17)
+
+	        		$('.directions .leftArrow').click(function() {
+	        			var index = +$(this).parent().find('.instructionIndex').html();
+	        			if(index) {
+	        				$(this).parent().fadeOut();
+	        				var el = $('.directions')[index-1];
+	        				$(el).fadeIn();
+	        				map.setCenter({
+			        			lat: directionObjs[index].start_location.lat(),
+			        			lng: directionObjs[index].start_location.lng()
+	        				});
+	        			}
+	        		});
+
+	        		$('.directions .rightArrow').click(function() {
+	        			var index = +$(this).parent().find('.instructionIndex').html();
+	        			var total = +$(this).parent().find('.totalInstructions').html();
+	        			if(index !== total) {
+	        				$(this).parent().fadeOut();
+	        				var el = $('.directions')[index+1];
+	        				$(el).fadeIn();
+	        				console.log(result.routes[0].legs[0])
+
+	        				if(result.routes[0].legs[i])
+
+	        				map.setCenter({
+			        			lat: directionObjs[index].start_location.lat(),
+			        			lng: directionObjs[index].start_location.lng()
+	        				});
+	        			}
+	        		});
 
 				} else {
 					alert(JSON.stringify(status));
@@ -125,6 +157,13 @@ $(document).ready(function() {
 		//If the device supports geolocation
 		if(navigator.geolocation) {
 			//Get locations
+			$('#loader, #overlay').fadeIn();
+			$('#overlayMessage').html('Getting your location...').fadeIn();
+			setTimeout(function() {
+				$('#overlayMessage').fadeOut(function() {
+					$('#overlayMessage').html('')
+				});
+			}, 2000)
 			navigator.geolocation.getCurrentPosition(getLocationParams, locationError);
 		} else {
 			//Show error, and force user to enter location manually
@@ -139,6 +178,7 @@ $(document).ready(function() {
 
 	//Show error message
 	function locationError() {
+		hideAjaxSpinner();
 		$('#startTour button')
 			.unbind('click')
 			.click(reverseGeocode);
@@ -192,6 +232,12 @@ $(document).ready(function() {
 			paramObj.transport = params.transport;
 			paramObj.radius = params.radius;
 			paramObj.categories = params.categories;
+			$('#overlayMessage').html('Getting results...').fadeIn();
+			setTimeout(function() {
+				$('#overlayMessage').fadeOut(function() {
+					$('#overlayMessage').html('')
+				});
+			}, 2000)
 
 		$.get('/json', paramObj, function(data) {
 			json = data;

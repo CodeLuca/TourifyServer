@@ -43,7 +43,7 @@
 				<img src='/img/arrow_left.png' class='leftArrow' />
 				<img src='/img/arrow_right.png' class='rightArrow' />
 				<div class='content'>{{{instructions}}}</div>
-				<div class='numberOfInstructions'><span class='instructionIndex'>{{@index}}</span> of <span class='totalInstructions'></span> instructions</div>
+				<div class='numberOfInstructions'><span class='instructionIndex'>{{@index}}</span> of <span class='totalInstructions'>{{../numberOfResults}}</span> instructions</div>
 			</div>
 		{{/each}}
 	</script>
@@ -53,6 +53,7 @@
 </head>
 <body>
 	<img src='/img/load.gif' id='loader'/>
+	<span id='overlayMessage'>Loading</span>
 	<div id='overlay'></div>
 	<div class='modal' id='locationError'>
 		Unfortunately, your device does not 
@@ -88,7 +89,7 @@
 		<div id='logo'/></div>
 		<div id='startTour'>
 			<input type='text' id='addressField' placeholder='Location' />
-			<button>Start tour</button>
+			<button>Start tour from my location</button>
 			<div id='refineResults'>Or tap here to start a custom tour</div>
 		</div>
 	</div>
