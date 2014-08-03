@@ -420,6 +420,9 @@ footer {
 		height: 57px;
 		background-image: url(/img/logoWhite.png);
 	}
+	body #startTour input[type='text'] {
+		height: 2em;
+	}
 	body #wrapper {
 		background-color: #90c277;
 		width: inherit;
@@ -430,6 +433,9 @@ footer {
 	body .wrapper {
 		width: 100%;
 		background-color: rgb(115, 199, 99);
+	}
+	body footer{
+		background-color: #90c277;
 	}
 	.wrapper .contentBox {
 		background-color: white;
