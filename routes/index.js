@@ -112,6 +112,9 @@ function httpsGet(url, callback) {
 router.get('/', function(req, res) {
 	res.sendfile('index.html')
 });
+router.get('/disable', function(req, res) {
+	res.send('So we don\'t get overloaded with traffic, we\'re disabling access for this talk. Check back soon though!')
+})
 router.get('/webapp', function(req,res) {
 	res.sendfile('webapp.html')
 })
