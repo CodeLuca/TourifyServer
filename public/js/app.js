@@ -167,7 +167,7 @@ $(document).ready(function() {
 		//If the device supports geolocation
 		if(navigator.geolocation) {
 			//Get locations
-			$('#loader, #overlay').fadeIn();
+			$('#loaxder, #overlay').fadeIn();
 			$('#overlayMessage').html('Getting your location...').fadeIn();
 			navigator.geolocation.getCurrentPosition(getLocationParamsAuto, locationError);
 		} else {

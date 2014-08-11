@@ -10,7 +10,8 @@ var keys = {
 	},
 	google: 'AIzaSyD_bAecEakNgYHmORtwlNvNxBVU5Dbc1m4',
 	original: 'AIzaSyBUzkW2Z2hPkHBjtXJKu4SIuvHUHYNmgc4',
-	bing: 'eEaPIhnfvI3ld3BreKTrbSm0RLLbEOQSdLf+FA9zYmA'
+	Oldbing: 'eEaPIhnfvI3ld3BreKTrbSm0RLLbEOQSdLf+FA9zYmA',
+	bing: 'dIfHjDvUd8lJHYxJJq3BDgrNfc0ZRQT2IU/ESiZuqAk'
 };
 
 module.exports = keys;
